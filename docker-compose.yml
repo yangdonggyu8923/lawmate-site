@@ -4,7 +4,7 @@ services:
     build:
       context: ./server/eureka-server
       dockerfile: Dockerfile
-    image: hojookim/lawmate-eureka:latest
+    image: yangdonggyu8923/lawmate-eureka:latest
     container_name: eureka
     ports:
       - "8761:8761"
@@ -17,11 +17,11 @@ services:
       retries: 5
 
   gateway:
-    hostname: api-gateway
+    hostname: gateway-server
     build:
-      context: ./server/api-gateway
+      context: ./server/gateway-server
       dockerfile: Dockerfile
-    image: hojookim/lawmate-gateway:latest
+    image: yangdonggyu8923/lawmate-gateway:latest
     container_name: gateway
     ports:
       - "8000:8000"
@@ -41,7 +41,7 @@ services:
     build:
       context: ./service/lawyer-service
       dockerfile: Dockerfile
-    image: hojookim/lawmate-lawyer:latest
+    image: yangdonggyu8923/lawmate-lawyer:latest
     container_name: lawyer
     ports:
       - "8081:8081"
@@ -58,7 +58,7 @@ services:
     build:
       context: ./service/admin-service
       dockerfile: Dockerfile
-    image: hojookim/lawmate-admin:latest
+    image: yangdonggyu8923/lawmate-admin:latest
     container_name: admin
     ports:
       - "8082:8082"
@@ -75,7 +75,7 @@ services:
     build:
       context: ./service/chat-service
       dockerfile: Dockerfile
-    image: hojookim/lawmate-chat:latest
+    image: yangdonggyu8923/lawmate-chat:latest
     container_name: chat
     ports:
       - "8083:8083"
@@ -92,7 +92,7 @@ services:
     build:
       context: ./service/manage-service
       dockerfile: Dockerfile
-    image: hojookim/lawmate-manage:latest
+    image: yangdonggyu8923/lawmate-manage:latest
     container_name: manage
     ports:
       - "8084:8084"
@@ -109,7 +109,7 @@ services:
     build:
       context: ./service/user-service
       dockerfile: Dockerfile
-    image: hojookim/lawmate-user:latest
+    image: yangdonggyu8923/lawmate-user:latest
     container_name: user
     ports:
       - "8085:8085"
