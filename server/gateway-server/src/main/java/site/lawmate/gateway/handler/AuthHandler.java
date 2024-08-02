@@ -93,6 +93,20 @@ public class AuthHandler {
                 .onErrorResume(GatewayException.class, e -> ServerResponse.status(e.getStatus().getStatus().value()).bodyValue(e.getMessage()));
     }
 
+    public Mono<ServerResponse> lawyerLogin(LoginDTO dto) {
+        return  webClient.post()
+                .uri("lb://lawyer-service/auth/login")
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(dto)
+                .retrieve()
+                .bodyToMono(PrincipalUserDetails.class)
+                .flatMap(this::generateTokensAndCreateResponse)
+                .onErrorMap(Exception.class, e -> new GatewayException(ExceptionStatus.UNAUTHORIZED, "Invalid User"))
+                .switchIfEmpty(Mono.error(new GatewayException(ExceptionStatus.UNAUTHORIZED, "Invalid User")))
+                .onErrorResume(GatewayException.class, e -> ServerResponse.status(e.getStatus().getStatus().value()).bodyValue(e.getMessage()));
+    }
+
+
     private Mono<ServerResponse> generateTokensAndCreateResponse(PrincipalUserDetails userDetails) {
         return jwtTokenProvider.generateToken(userDetails, false)
                 .zipWith(jwtTokenProvider.generateToken(userDetails, true))

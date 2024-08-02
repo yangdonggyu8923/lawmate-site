@@ -37,6 +37,7 @@ public class AuthRouter {
                 .POST("/auth/refresh", req -> authHandler.refresh(req.headers().header("Authorization").get(0)))
                 .POST("/auth/logout", req -> authHandler.logout(req.headers().header("Authorization").get(0)))
                 .POST("/auth/admin/login", req -> req.bodyToMono(LoginDTO.class).flatMap(authHandler::adminLogin))
+                .POST("/auth/lawyer/login", req -> req.bodyToMono(LoginDTO.class).flatMap(authHandler::lawyerLogin))
                 .build();
     }
 }

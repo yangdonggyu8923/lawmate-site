@@ -20,7 +20,7 @@ import site.lawmate.lawyer.service.impl.ReservationServiceImpl;
 @ApiResponses(value = {
         @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
         @ApiResponse(responseCode = "404", description = "Customer not found")})
-@RequestMapping(path = "/reservation")
+@RequestMapping(path = "/reservations")
 public class ReservationController {
     private final ReservationServiceImpl service;
 
@@ -60,7 +60,7 @@ public class ReservationController {
     }
 
     @PatchMapping("/status/{id}")
-    public Mono<Reservation> updateReservationStatus(@PathVariable String id, @RequestParam String status) {
+    public Mono<Reservation> updateReservationStatus(@PathVariable("id") String id, @RequestParam("status") String status) {
         return service.updateReservationStatus(id, status);
     }
 }

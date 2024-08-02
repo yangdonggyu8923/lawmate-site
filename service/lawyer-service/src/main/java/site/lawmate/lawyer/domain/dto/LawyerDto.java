@@ -15,7 +15,6 @@ import java.util.List;
 @ToString
 public class LawyerDto {
     private String id;
-    private String username;
     private String email;
     private String password;
     private String name;

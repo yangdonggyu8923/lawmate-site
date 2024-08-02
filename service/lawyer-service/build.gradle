@@ -91,6 +91,9 @@ dependencies {
 	// config
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
+	// pdfbox
+	implementation 'org.apache.pdfbox:pdfbox:2.0.27'
+
 	// Test
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
