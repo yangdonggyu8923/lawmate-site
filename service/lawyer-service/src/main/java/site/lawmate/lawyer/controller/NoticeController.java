@@ -21,6 +21,7 @@ import site.lawmate.lawyer.service.impl.NoticeServiceImpl;
         @ApiResponse(responseCode = "404", description = "Customer not found")})
 @RequestMapping(path = "/notifications")
 public class NoticeController {
+    //3
     private final NoticeServiceImpl service;
 
     @PostMapping("/save")
