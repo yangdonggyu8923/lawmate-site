@@ -22,8 +22,6 @@ import site.lawmate.lawyer.service.impl.PostServiceImpl;
 @RequestMapping(path = "/posts")
 public class PostController {
     private final PostServiceImpl service;
-    //3
-
     @PostMapping("/save/{id}")
     public ResponseEntity<Mono<Lawyer>> createPost(@PathVariable("id") String lawyerId, @RequestBody Post post) {
         return ResponseEntity.ok(service.postToLawyer(lawyerId, post));
