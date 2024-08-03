@@ -8,10 +8,16 @@ import java.util.Map;
 public interface ManageService {
     void saveUserStats();
 
-    List<UserStatsDto> findAll();
+    List<UserStatsDto> findByDate();
 
     List<UserStatsDto> findByMonth();
+    List<UserStatsDto> findByYear();
 
     Map<String, Long> getUserTotalStats();
+
+    Long getIncreaseRate();
+
+    Long selectTotalUserCount();
+    Long selectYesterdayNewUserCount();
 
 }

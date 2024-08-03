@@ -7,12 +7,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import site.lawmate.admin.repository.InquiryRepository;
 import site.lawmate.admin.service.MailService;
 
 @Service
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
+    private final InquiryRepository inquiryRepository;
     private final JavaMailSender mailSender;
 
     @Override

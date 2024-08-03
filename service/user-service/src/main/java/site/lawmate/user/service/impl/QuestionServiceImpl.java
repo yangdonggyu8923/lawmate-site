@@ -2,6 +2,7 @@ package site.lawmate.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,13 +89,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionDto> findAll() {
-        return questionRepository.findAllByOrderByIdDesc().stream().map(i -> entityToDto(i)).toList();
+    public List<QuestionDto> findAll(PageRequest pageRequest) {
+        return questionRepository.findAllByOrderByIdDesc(pageRequest).stream().map(this::entityToDto).toList();
     }
 
     @Override
     public Optional<QuestionDto> findById(Long id) {
-        return questionRepository.findById(id).map(i -> entityToDto(i));
+        return questionRepository.findById(id).map(this::entityToDto);
     }
 
     @Override

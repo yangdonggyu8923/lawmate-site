@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.lawmate.user.component.Messenger;
-import site.lawmate.user.domain.dto.QuestionDto;
 import site.lawmate.user.domain.dto.UserDto;
 import site.lawmate.user.service.UserService;
 
@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -27,14 +26,18 @@ public class UserController {
     private final UserService service;
 
     @GetMapping("/all")
-    public ResponseEntity<List<UserDto>> findAll() throws SQLException {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<List<UserDto>> findAll(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        log.info("유저 전체 조회 진입 page: {} size: {}", page, size);
+        return ResponseEntity.ok(service.findAll(PageRequest.of(page, size)));
     }
 
     @GetMapping("/searchEmail")
     public ResponseEntity<Boolean> existsByEmail(@RequestParam("email") String email) {
-        log.info("Parameter information of existsEmail: " + email);
-        Boolean flag = service.existsByEmail(email);
+        log.info("유저 search email: {}", email);
+        Boolean flag = service.existsByUsername(email);
         log.info("existsEmail : " + email);
         return ResponseEntity.ok(flag);
     }
@@ -46,7 +49,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<UserDto>> findById(@PathVariable("id") Long id) {
-        log.info("Parameter information of findById: " + id);
+        log.info("유저 findById: {}", id);
         return ResponseEntity.ok(service.findById(id));
     }
 
@@ -66,9 +69,10 @@ public class UserController {
         return ResponseEntity.ok(flag);
     }
 
-    @PutMapping("/modifyPoint")
-    public ResponseEntity<Messenger> modifyPoint(@RequestBody UserDto dto) {
-        return ResponseEntity.ok(service.modifyPoint(dto));
+
+    @PutMapping("/updatePoint/{id}")
+    public ResponseEntity<Messenger> updateUserPoint(@RequestBody UserDto dto) {
+        return ResponseEntity.ok(service.updateUserPoints(dto));
     }
 
 }

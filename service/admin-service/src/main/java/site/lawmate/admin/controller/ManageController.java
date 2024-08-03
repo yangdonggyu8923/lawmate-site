@@ -3,10 +3,7 @@ package site.lawmate.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import site.lawmate.admin.domain.dto.LawyerStatsDto;
@@ -40,5 +37,10 @@ public class ManageController {
     @GetMapping("/all")
     public Flux<LawyerStatsDto> getLawyerStats(){
         return manageService.getLawyerStats();
+    }
+
+    @GetMapping("/permit")
+    public Mono<String> permitLawyer(@RequestParam("id") String id){
+        return manageService.setLawyerAuthTrue(id);
     }
 }

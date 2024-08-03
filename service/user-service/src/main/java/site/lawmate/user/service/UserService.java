@@ -1,6 +1,8 @@
 package site.lawmate.user.service;
 
 import site.lawmate.user.component.Messenger;
+import site.lawmate.user.domain.dto.LoginDTO;
+import site.lawmate.user.domain.dto.OAuth2UserDto;
 import site.lawmate.user.domain.model.User;
 import site.lawmate.user.domain.dto.UserDto;
 
@@ -14,7 +16,7 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
                 .phone(dto.getPhone())
                 .age(dto.getAge())
                 .gender(dto.getGender())
-                .picture(dto.getPicture())
+                .profile(dto.getProfile())
                 .build();
     }
 
@@ -28,20 +30,22 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
                 .age(user.getAge())
                 .gender(user.getGender())
                 .point(user.getPoint())
-                .picture(user.getPicture())
+                .profile(user.getProfile())
                 .build();
     }
 
-    Messenger login(UserDto param);
+    LoginDTO oauthJoin(OAuth2UserDto dto);
+
+    Messenger login(UserDto dto);
 
     Boolean logout(String accessToken);
 
-    Messenger update(UserDto user);
+    Messenger update(UserDto dto);
 
     User autoRegister();
 
-    Boolean existsByEmail(String email);
+    Boolean existsByUsername(String email);
 
-    Messenger modifyPoint(UserDto user);
+    Messenger updateUserPoints(UserDto dto);
 
 }

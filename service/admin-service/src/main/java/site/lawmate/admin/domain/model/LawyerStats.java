@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class LawyerStats {
 
     @Id
+    private String id;
     private LocalDate date; // 날짜
     private Long newLawyerCount; // 신규 가입자 수
     private Long increaseRate; // 증가율

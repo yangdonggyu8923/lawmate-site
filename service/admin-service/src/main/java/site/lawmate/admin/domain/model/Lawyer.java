@@ -24,6 +24,6 @@ public class Lawyer {
     String lawyerNo;
     String mid;
     Boolean auth;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    LocalDateTime createdDate;
+    LocalDateTime modifiedDate;
 }

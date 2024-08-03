@@ -1,23 +1,20 @@
 package site.lawmate.user.controller;
+
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 import site.lawmate.user.component.Messenger;
+import site.lawmate.user.domain.dto.LoginDTO;
+import site.lawmate.user.domain.dto.OAuth2UserDto;
 import site.lawmate.user.domain.dto.UserDto;
 import site.lawmate.user.service.UserService;
 import site.lawmate.user.domain.dto.LoginDTO;
-import site.lawmate.user.domain.model.PrincipalUserDetails;
-import site.lawmate.user.domain.model.UserModel;
-import site.lawmate.user.domain.vo.Registration;
-import site.lawmate.user.domain.vo.Role;
-import java.sql.SQLException;
-import java.util.List;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+import java.sql.SQLException;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -33,25 +30,20 @@ public class AuthController {
     @SuppressWarnings("static-access")
     @PostMapping("/save")
     public ResponseEntity<Messenger> save(@RequestBody UserDto dto) throws SQLException {
-        log.info("Parameters received through controller: " + dto);
+        log.info("user save 파라미터: {}", dto);
         return ResponseEntity.ok(service.save(dto));
     }
 
-    @PostMapping(path = "/login")
+    @PostMapping(path = "/login/local")
     public ResponseEntity<Messenger> login(@RequestBody UserDto dto) throws SQLException {
         Messenger messenger = service.login(dto);
         return ResponseEntity.ok(messenger);
     }
-//
-//    @PostMapping("/login/local")
-//    public Mono<PrincipalUserDetails> login(@RequestBody LoginDTO dto) {
-//        log.info("login: {}", dto);
-//        return Mono.just(new PrincipalUserDetails(UserModel.builder()
-//                .id("aaa1234")
-//                .email(dto.getEmail())
-//                .roles(List.of(Role.ROLE_USER))
-//                .registration(Registration.LOCAL)
-//                .build(), null));
-//    }
+
+    @PostMapping("/oauth2/{registration}")
+    public ResponseEntity<LoginDTO> oauthJogin(@RequestBody OAuth2UserDto dto) {
+        log.info("user oauth2 파라미터: {} ", dto);
+        return ResponseEntity.ok(service.oauthJoin(dto));
+    }
 
 }

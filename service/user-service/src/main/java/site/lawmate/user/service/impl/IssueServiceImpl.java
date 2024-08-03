@@ -2,6 +2,8 @@ package site.lawmate.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,6 +18,7 @@ import site.lawmate.user.repository.IssueRepository;
 import site.lawmate.user.repository.UserRepository;
 import site.lawmate.user.service.IssueService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -31,6 +34,13 @@ public class IssueServiceImpl implements IssueService {
     private final IssueRepository issueRepository;
     private final UserRepository userRepository;
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+
+    public void addEmitter(SseEmitter emitter) {
+        emitters.add(emitter);
+        emitter.onCompletion(() -> emitters.remove(emitter));
+        emitter.onTimeout(() -> emitters.remove(emitter));
+    }
+
     @Transactional
     @Override
     public Messenger save(IssueDto dto) {
@@ -45,9 +55,21 @@ public class IssueServiceImpl implements IssueService {
                 .client(dto.getClient())
                 .build();
         Issue savedIssue = issueRepository.save(issue);
+        sendIssueUpdate(savedIssue);
         return Messenger.builder()
                 .message(issueRepository.existsById(savedIssue.getId()) ? "SUCCESS" : "FAILURE")
                 .build();
+    }
+
+    private void sendIssueUpdate(Issue issue) {
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send(issue);
+            } catch (IOException e) {
+                emitter.complete();
+                emitters.remove(emitter);
+            }
+        }
     }
 
     @Transactional
@@ -92,13 +114,13 @@ public class IssueServiceImpl implements IssueService {
 
     @Transactional
     @Override
-    public List<IssueDto> findAll() {
-        return issueRepository.findAllByOrderByIdDesc().stream().map(i -> entityToDto(i)).toList();
+    public List<IssueDto> findAll(PageRequest pageRequest) {
+        return issueRepository.findAllByOrderByIdDesc(pageRequest).stream().map(this::entityToDto).toList();
     }
 
     @Override
     public Optional<IssueDto> findById(Long id) {
-        return issueRepository.findById(id).map(i -> entityToDto(i));
+        return issueRepository.findById(id).map(this::entityToDto);
     }
 
     @Override

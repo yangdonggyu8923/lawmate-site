@@ -21,6 +21,7 @@ public class Issue extends BaseEntity {
     private String title;
     private String content;
     private String attachment;
+    private String lawyerId;
 
     @ManyToOne
     @JoinColumn(name = "client_id")

@@ -16,8 +16,7 @@ public interface ManageService {
     Mono<Long> countLawyers();
     Mono<Long> countNewLawyers();
     Mono<Long> getIncreaseRate();
-
     void saveLawyerStats();
-
     Flux<LawyerStatsDto> getLawyerStats();
+    Mono<String> setLawyerAuthTrue(String id);
 }

@@ -1,6 +1,7 @@
 package site.lawmate.admin.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import site.lawmate.admin.service.MailService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/mail")
 @RequiredArgsConstructor
@@ -35,5 +37,7 @@ public class MailController {
                 .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Failed to send mail: " + e.getMessage())));
     }
+
+
 
 }

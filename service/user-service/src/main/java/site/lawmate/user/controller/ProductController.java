@@ -5,11 +5,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.lawmate.user.component.Messenger;
-import site.lawmate.user.domain.dto.PaymentDto;
 import site.lawmate.user.domain.dto.ProductDto;
 import site.lawmate.user.service.ProductService;
 
@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(path = "/product")
 @Slf4j
@@ -43,9 +42,11 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ProductDto>> findAll(Long id) throws SQLException {
-        log.info("findAll product 진입 성공");
-        return ResponseEntity.ok(productService.findAll());
+    public ResponseEntity<List<ProductDto>> findAll(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        log.info("product 전체 조회 진입 page: {} size: {}", page, size);
+        return ResponseEntity.ok(productService.findAll(PageRequest.of(page, size)));
     }
 
     @PutMapping("/{id}")

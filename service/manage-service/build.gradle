@@ -38,18 +38,19 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
-//	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	//mybatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.1.0:jakarta"
-//	testImplementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-//	testAnnotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
+	testImplementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	testAnnotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
-	implementation(project(':service:user-service')){
-		transitive = false
-	}
 	// config
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 }
@@ -59,9 +60,9 @@ dependencyManagement {
 	}
 }
 
-//tasks.named('test') {
-//	useJUnitPlatform()
-//}
+tasks.named('test') {
+	useJUnitPlatform()
+}
 clean {
 	delete file('src/main/generated')
 }

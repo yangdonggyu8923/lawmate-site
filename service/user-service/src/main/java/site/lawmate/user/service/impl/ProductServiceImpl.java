@@ -1,6 +1,7 @@
 package site.lawmate.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.lawmate.user.component.Messenger;
@@ -54,13 +55,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findAll() {
-        return productRepository.findAllByOrderByIdAsc().stream().map(i -> entityToDto(i)).toList();
+    public List<ProductDto> findAll(PageRequest pageRequest) {
+        return productRepository.findAllByOrderByIdAsc().stream().map(this::entityToDto).toList();
     }
 
     @Override
     public Optional<ProductDto> findById(Long id) {
-        return productRepository.findById(id).map(i -> entityToDto(i));
+        return productRepository.findById(id).map(this::entityToDto);
     }
 
     @Override

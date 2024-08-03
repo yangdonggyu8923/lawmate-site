@@ -1,5 +1,6 @@
 package site.lawmate.user.service;
 
+import org.springframework.data.domain.PageRequest;
 import site.lawmate.user.component.Messenger;
 import site.lawmate.user.domain.dto.QuestionDto;
 import site.lawmate.user.domain.model.Question;
@@ -29,4 +30,5 @@ public interface QuestionService extends CommandService<QuestionDto>, QueryServi
     Messenger update(QuestionDto dto);
 
     List<QuestionDto> findByTitleAndContent(String keyword);
+
 }

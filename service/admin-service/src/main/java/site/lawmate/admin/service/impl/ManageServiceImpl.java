@@ -1,6 +1,7 @@
 package site.lawmate.admin.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,6 +14,7 @@ import site.lawmate.admin.service.ManageService;
 
 import java.time.LocalDate;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ManageServiceImpl implements ManageService {
@@ -53,7 +55,7 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public Mono<Long> countNewLawyers() {
-        return manageRepository.findAll().filter(lawyer -> lawyer.getCreatedAt().toLocalDate().equals(yesterday)).count();
+        return manageRepository.findAll().filter(lawyer -> lawyer.getCreatedDate().toLocalDate().equals(yesterday)).count();
     }
 
     @Override
@@ -65,13 +67,16 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public void saveLawyerStats() {
-        LawyerStats lawyerStats = LawyerStats.builder()
-                .date(yesterday)
-                .newLawyerCount(countNewLawyers().block())
-                .increaseRate(getIncreaseRate().block())
-                .countLawyersFalse(countLawyersAuthFalse().block())
-                .build();
-        lawyerStatsRepository.save(lawyerStats).subscribe();
+        log.info("saveLawyerStats");
+       Mono.zip(countNewLawyers(), getIncreaseRate(), countLawyersAuthFalse())
+               .map(tuple -> LawyerStats.builder()
+                       .date(yesterday)
+                       .newLawyerCount(tuple.getT1())
+                       .increaseRate(tuple.getT2())
+                       .countLawyersFalse(tuple.getT3())
+                       .build())
+               .flatMap(lawyerStatsRepository::save)
+               .subscribe();
     }
 
     @Override
@@ -82,6 +87,18 @@ public class ManageServiceImpl implements ManageService {
                 .increaseRate(lawyerStats.getIncreaseRate())
                 .totalLawyersAuthFalse(lawyerStats.getCountLawyersFalse())
                 .build());
+    }
+
+    @Override
+    public Mono<String> setLawyerAuthTrue(String id) {
+        return manageRepository.findById(id)
+                .map(lawyer -> {
+                    lawyer.setAuth(true);
+                    return lawyer;
+                })
+                .flatMap(manageRepository::save)
+                .flatMap(lawyer -> Mono.just("Auth Success"))
+                .switchIfEmpty(Mono.just("Auth Failure"));
     }
 
 

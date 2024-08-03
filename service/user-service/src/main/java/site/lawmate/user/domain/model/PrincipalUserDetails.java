@@ -13,14 +13,14 @@ import java.util.Map;
 @Component
 @Setter
 public class PrincipalUserDetails implements Serializable {
-    private UserModel user;
+    private User user;
     private Map<String, Object> attributes;
 
-    public PrincipalUserDetails(UserModel user) {
+    public PrincipalUserDetails(User user) {
         this.user = user;
     }
 
-    public PrincipalUserDetails(UserModel user, Map<String, Object> attributes) {
+    public PrincipalUserDetails(User user, Map<String, Object> attributes) {
         this.user = user;
         this.attributes = attributes;
     }

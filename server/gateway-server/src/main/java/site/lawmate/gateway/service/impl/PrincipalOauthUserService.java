@@ -13,11 +13,7 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 import site.lawmate.gateway.domain.model.OAuth2UserDTO;
 import site.lawmate.gateway.domain.model.PrincipalUserDetails;
-import site.lawmate.gateway.domain.model.UserModel;
 import site.lawmate.gateway.domain.vo.Registration;
-import site.lawmate.gateway.domain.vo.Role;
-
-import java.util.List;
 
 
 @Service
@@ -38,24 +34,24 @@ public class PrincipalOauthUserService implements ReactiveOAuth2UserService<OAut
                                         .flatMap(clientId -> Mono.just(Registration.valueOf(clientId.toUpperCase())))
                                         .flatMap(registration ->
                                                         Mono.just(OAuth2UserDTO.of(registration, attributes))
-//                .flatMap(oauth2UserDTO ->
-//                    webClient.post()
-//                    .uri("lb://user-service/auth/oauth2")
-//                            //.uri("lb://user-service/auth/oauth2/" + registration.name().toLowerCase())
-//                    .accept(MediaType.APPLICATION_JSON)
-//                    .bodyValue(oauth2UserDTO)
-//                    .retrieve()
-//                    .bodyToMono(PrincipalUserDetails.class)
-//                )
-                                                                .flatMap(oAuth2UserInfo ->
-                                                                        Mono.just(new PrincipalUserDetails(
-                                                                                UserModel.builder()
-                                                                                        .email(oAuth2UserInfo.email())
-                                                                                        .name(oAuth2UserInfo.name())
-                                                                                        .profile(oAuth2UserInfo.profile())
-                                                                                        .roles(List.of(Role.ROLE_USER))
-                                                                                        .build(),
-                                                                                attributes)))
+                                                                .flatMap(oauth2UserDTO ->
+                                                                        webClient.post()
+                                                                                .uri("lb://user-service/auth/oauth2/" + registration.name().toLowerCase())
+                                                                                .accept(MediaType.APPLICATION_JSON)
+                                                                                .bodyValue(oauth2UserDTO)
+                                                                                .retrieve()
+                                                                                .bodyToMono(PrincipalUserDetails.class)
+                                                                )
+//                                                                .flatMap(oAuth2UserInfo ->
+//                                                                        Mono.just(new PrincipalUserDetails(
+//                                                                                UserModel.builder()
+//                                                                                        .email(oAuth2UserInfo.email())
+//                                                                                        .name(oAuth2UserInfo.name())
+//                                                                                        .profile(oAuth2UserInfo.profile())
+//                                                                                        .roles(List.of(Role.ROLE_USER))
+//                                                                                        .build(),
+//                                                                                attributes)
+//                                                                        ))
                                         )
                 );
     }

@@ -22,18 +22,18 @@ public class AuthHandler {
     private final WebClient webClient;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public Mono<ServerResponse> localLogin(LoginDTO dto) {
-        return  webClient.post()
-                .uri("lb://user-service/auth/login/local")
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(dto)
-                .retrieve()
-                .bodyToMono(PrincipalUserDetails.class)
-                .flatMap(this::generateTokensAndCreateResponse)
-                .onErrorMap(Exception.class, e -> new GatewayException(ExceptionStatus.UNAUTHORIZED, "Invalid User"))
-                .switchIfEmpty(Mono.error(new GatewayException(ExceptionStatus.UNAUTHORIZED, "Invalid User")))
-                .onErrorResume(GatewayException.class, e -> ServerResponse.status(e.getStatus().getStatus().value()).bodyValue(e.getMessage()));
+    public Mono<ServerResponse> localLogin(LoginDTO loginDTO) {
+        return login(loginDTO, "lb://user-service/auth/login/local");
     }
+
+    public Mono<ServerResponse> adminLogin(LoginDTO loginDTO) {
+        return login(loginDTO, "lb://admin-service/auth/login");
+    }
+
+    public Mono<ServerResponse> lawyerLogin(LoginDTO loginDTO) {
+        return login(loginDTO, "lb://lawyer-service/auth/login");
+    }
+
 
     public Mono<ServerResponse> refresh(String refreshToken) {
         return Mono.just(refreshToken)
@@ -77,36 +77,18 @@ public class AuthHandler {
                 .flatMap(i -> ServerResponse.ok().build())
                 .onErrorResume(GatewayException.class, e -> ServerResponse.status(e.getStatus().getStatus().value()).bodyValue(e.getMessage()));
     }
-
-    public Mono<ServerResponse> adminLogin(LoginDTO loginDTO) {
-
+    private Mono<ServerResponse> login(LoginDTO loginDTO, String uri) {
         return webClient.post()
-                .uri("lb://admin-service/auth/login")
+                .uri(uri)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(loginDTO)
                 .retrieve()
                 .bodyToMono(PrincipalUserDetails.class)
-                .log()
                 .flatMap(this::generateTokensAndCreateResponse)
                 .onErrorMap(Exception.class, e -> new GatewayException(ExceptionStatus.UNAUTHORIZED, "Invalid User"))
                 .switchIfEmpty(Mono.error(new GatewayException(ExceptionStatus.UNAUTHORIZED, "Invalid User")))
                 .onErrorResume(GatewayException.class, e -> ServerResponse.status(e.getStatus().getStatus().value()).bodyValue(e.getMessage()));
     }
-
-    public Mono<ServerResponse> lawyerLogin(LoginDTO dto) {
-        return  webClient.post()
-                .uri("lb://lawyer-service/auth/login")
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(dto)
-                .retrieve()
-                .bodyToMono(PrincipalUserDetails.class)
-                .flatMap(this::generateTokensAndCreateResponse)
-                .onErrorMap(Exception.class, e -> new GatewayException(ExceptionStatus.UNAUTHORIZED, "Invalid User"))
-                .switchIfEmpty(Mono.error(new GatewayException(ExceptionStatus.UNAUTHORIZED, "Invalid User")))
-                .onErrorResume(GatewayException.class, e -> ServerResponse.status(e.getStatus().getStatus().value()).bodyValue(e.getMessage()));
-    }
-
-
     private Mono<ServerResponse> generateTokensAndCreateResponse(PrincipalUserDetails userDetails) {
         return jwtTokenProvider.generateToken(userDetails, false)
                 .zipWith(jwtTokenProvider.generateToken(userDetails, true))
@@ -132,4 +114,5 @@ public class AuthHandler {
                 .httpOnly(true)
                 .build();
     }
+
 }

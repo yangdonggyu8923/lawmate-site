@@ -39,14 +39,9 @@ public class AdminController {
         return ResponseEntity.ok(adminService.delete(id));
     }
 
-    @PutMapping("/permit/{id}")
-    public ResponseEntity<Mono<String>> permit(@PathVariable("id") String id) {
-        return ResponseEntity.ok(adminService.permit(id));
-    }
-
-    @PutMapping("/revoke/{id}")
-    public ResponseEntity<Mono<String>> revoke(@PathVariable("id") String id) {
-        return ResponseEntity.ok(adminService.revoke(id));
+    @PutMapping("/switching/{id}")
+    public ResponseEntity<Mono<String>> switching(@PathVariable("id") String id) {
+        return ResponseEntity.ok(adminService.switching(id));
     }
 
     @GetMapping("/enabled")

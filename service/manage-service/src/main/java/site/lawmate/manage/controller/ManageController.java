@@ -31,10 +31,10 @@ public class ManageController {
         manageService.saveUserStats();
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<UserStatsDto>> findAll() {
+    @GetMapping("/date")
+    public ResponseEntity<List<UserStatsDto>> findByDate() {
         log.info("findAll");
-        return ResponseEntity.ok(manageService.findAll());
+        return ResponseEntity.ok(manageService.findByDate());
     }
 
     @GetMapping("/month")
@@ -43,7 +43,13 @@ public class ManageController {
         return ResponseEntity.ok(manageService.findByMonth());
     }
 
-    @GetMapping("/gender")
+    @GetMapping("/year")
+    public ResponseEntity<List<UserStatsDto>> findByYear() {
+        log.info("findByYear");
+        return ResponseEntity.ok(manageService.findByYear());
+    }
+
+    @GetMapping("/total")
     public ResponseEntity<Map<String,Long>> getUserTotalStats() {
         log.info("getUserTotalStats");
         return ResponseEntity.ok(manageService.getUserTotalStats());

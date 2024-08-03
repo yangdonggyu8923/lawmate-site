@@ -7,9 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
-import site.lawmate.user.domain.model.Product;
-import site.lawmate.user.domain.model.User;
-import site.lawmate.user.domain.vo.PaymentStatus;
+
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,12 +16,11 @@ import site.lawmate.user.domain.vo.PaymentStatus;
 @Builder
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class PaymentDto {
+public class PremiumDto {
     private Long id;
-    private Long lawyer;
-    private String paymentUid;
-    private PaymentStatus status;
-    private User buyer;
-    private Product product;
-    private Long amount;
+    private String plan;
+    private String price;
+    private LocalDateTime startDate;
+    private LocalDateTime expireDate;
+
 }

@@ -6,7 +6,7 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import site.lawmate.admin.domain.dto.ChatListener;
+import site.lawmate.admin.handler.ChatListener;
 import site.lawmate.admin.domain.model.ChatMessage;
 import site.lawmate.admin.service.impl.ChatServiceImpl;
 
@@ -49,7 +49,7 @@ public class ChatController {
     }
 
     @GetMapping("/create")
-    public Mono<ChatMessage> createChatRoom(@RequestParam String sender, @RequestParam String receiver) {
+    public Mono<ChatMessage> createChatRoom(@RequestParam("sender") String sender, @RequestParam("receiver") String receiver) {
         return chatServiceImpl.createChatRoom(sender, receiver);
     }
 

@@ -7,7 +7,6 @@ public interface ProductService extends CommandService<ProductDto>, QueryService
 
     default Product dtoToEntity(ProductDto dto) {
         return Product.builder()
-                .id(dto.getId())
                 .itemName(dto.getItemName())
                 .price(dto.getPrice())
                 .image(dto.getImage())

@@ -8,12 +8,12 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import site.lawmate.user.domain.vo.PaymentStatus;
 
-@Entity(name = "payments")
+@Entity(name = "user_payments")
 @Getter
 @NoArgsConstructor
 @Component
 @Setter
-public class Payment extends BaseEntity {
+public class UserPayment extends BaseEntity {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Payment extends BaseEntity {
     private PaymentStatus status;
 
     @Builder
-    public Payment(Long id, Long lawyer, String paymentUid, PaymentStatus status, User buyer, Product product, Long amount) {
+    public UserPayment(Long id, Long lawyer, String paymentUid, PaymentStatus status, User buyer, Product product, Long amount) {
         this.id = id;
         this.lawyer = lawyer;
         this.paymentUid = paymentUid;

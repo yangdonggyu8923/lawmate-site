@@ -20,7 +20,6 @@ public class CaseLawDaoImpl implements CaseLawDao {
 
     private final JPAQueryFactory factory;
     private final QCaseLaw caseLaw = QCaseLaw.caseLaw;
-
     private final QCaseLawDetail caseLawDetail = QCaseLawDetail.caseLawDetail;
     @Override
     public List<CaseLawDto> getCaseLawList() {

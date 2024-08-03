@@ -22,5 +22,5 @@ public class Product {
     private String image;
 
     @OneToMany(mappedBy = "product")
-    private List<Payment> payments;
+    private List<UserPayment> payments;
 }
