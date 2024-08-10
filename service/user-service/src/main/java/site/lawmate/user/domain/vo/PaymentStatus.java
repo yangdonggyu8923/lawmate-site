@@ -2,6 +2,7 @@ package site.lawmate.user.domain.vo;
 
 public enum PaymentStatus {
     OK,
-    READY,
-    CANCEL
+    PENDING,
+    CANCELED,
+    FAILED
 }

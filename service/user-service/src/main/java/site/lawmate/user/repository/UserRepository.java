@@ -28,7 +28,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("update users a set a.point = a.point - :point where a.id = :id")
     void minusPoint(@Param("id") Long id, @Param("point") Long point);
 
-//    Optional<Payment> findByBuyerId(Long id);
-
-
 }

@@ -15,6 +15,8 @@ import site.lawmate.gateway.domain.vo.ExceptionStatus;
 import site.lawmate.gateway.exception.GatewayException;
 import site.lawmate.gateway.provider.JwtTokenProvider;
 
+import java.util.Map;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -97,11 +99,18 @@ public class AuthHandler {
                     String refreshToken = tokens.getT2();
                 log.info("accessToken: {}", accessToken);
                 log.info("refreshToken: {}", refreshToken);
+                    ResponseCookie accessTokenCookie = createCookie("accessToken", accessToken, jwtTokenProvider.getAccessTokenExpired());
+                    ResponseCookie refreshTokenCookie = createCookie("refreshToken", refreshToken, jwtTokenProvider.getRefreshTokenExpired());
+
+                    // 쿠키와 accessToken을 JSON 응답으로 함께 반환
                     return ServerResponse.ok()
                             .contentType(MediaType.APPLICATION_JSON)
-                            .cookie(createCookie("accessToken", accessToken, jwtTokenProvider.getAccessTokenExpired()))
-                            .cookie(createCookie("refreshToken", refreshToken, jwtTokenProvider.getRefreshTokenExpired()))
-                            .bodyValue(Boolean.TRUE);
+                            .cookie(accessTokenCookie)
+                            .cookie(refreshTokenCookie)
+                            .bodyValue(Map.of(
+                                    "success", true,
+                                    "accessToken", accessToken  // 클라이언트에서 사용할 수 있도록 응답 바디에 포함
+                            ));
                 });
     }
 
@@ -109,8 +118,7 @@ public class AuthHandler {
         return ResponseCookie.from(name, value)
                 .maxAge(maxAge)
                 .path("/")
-                .sameSite("None")
-                .secure(true)
+                .sameSite("Lax")
                 .httpOnly(true)
                 .build();
     }

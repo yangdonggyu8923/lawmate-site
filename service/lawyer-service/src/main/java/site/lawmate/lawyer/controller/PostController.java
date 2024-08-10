@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,8 @@ import site.lawmate.lawyer.service.impl.PostServiceImpl;
 public class PostController {
     private final PostServiceImpl service;
 
-    @PostMapping(value = "/save/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Mono<Lawyer>> createPost(@PathVariable("id") String lawyerId,
+    @PostMapping(value = "/save/{lawyerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Mono<Lawyer>> createPost(@PathVariable("lawyerId") String lawyerId,
                                                    @RequestPart("post") String postJson,
                                                    @RequestPart(value = "files", required = false) Flux<FilePart> fileParts) throws JsonProcessingException {
         Post post = new ObjectMapper().readValue(postJson, Post.class); // JSON 문자열을 Post 객체로 변환
@@ -55,8 +56,11 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Flux<Post>> getAllPosts() {
-        return ResponseEntity.ok(service.getAllPosts());
+    public ResponseEntity<Flux<Post>> getAllPosts(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(service.getAllPosts(PageRequest.of(page, size)));
     }
 
     @DeleteMapping("/{id}")

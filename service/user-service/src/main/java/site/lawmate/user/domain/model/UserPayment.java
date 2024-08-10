@@ -18,18 +18,18 @@ public class UserPayment extends BaseEntity {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long lawyer;
-    private String paymentUid; //결제 고유 번호
+    private String lawyer;
+    private String impUid; //결제 고유 번호
     private Long amount;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
     @Builder
-    public UserPayment(Long id, Long lawyer, String paymentUid, PaymentStatus status, User buyer, Product product, Long amount) {
+    public UserPayment(Long id, String lawyer, String impUid, PaymentStatus status, User buyer, Product product, Long amount) {
         this.id = id;
         this.lawyer = lawyer;
-        this.paymentUid = paymentUid;
+        this.impUid = impUid;
         this.status = status;
         this.buyer = buyer;
         this.product = product;

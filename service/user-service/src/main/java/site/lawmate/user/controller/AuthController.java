@@ -5,13 +5,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import site.lawmate.user.component.Messenger;
 import site.lawmate.user.domain.dto.LoginDTO;
 import site.lawmate.user.domain.dto.OAuth2UserDto;
 import site.lawmate.user.domain.dto.UserDto;
 import site.lawmate.user.service.UserService;
-import site.lawmate.user.domain.dto.LoginDTO;
 
 import java.sql.SQLException;
 
@@ -34,14 +36,8 @@ public class AuthController {
         return ResponseEntity.ok(service.save(dto));
     }
 
-    @PostMapping(path = "/login/local")
-    public ResponseEntity<Messenger> login(@RequestBody UserDto dto) throws SQLException {
-        Messenger messenger = service.login(dto);
-        return ResponseEntity.ok(messenger);
-    }
-
     @PostMapping("/oauth2/{registration}")
-    public ResponseEntity<LoginDTO> oauthJogin(@RequestBody OAuth2UserDto dto) {
+    public ResponseEntity<LoginDTO> oauthLogin(@RequestBody OAuth2UserDto dto) {
         log.info("user oauth2 파라미터: {} ", dto);
         return ResponseEntity.ok(service.oauthJoin(dto));
     }

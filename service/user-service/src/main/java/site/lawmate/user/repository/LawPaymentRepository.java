@@ -8,7 +8,7 @@ import site.lawmate.user.domain.model.LawPayment;
 import java.util.List;
 
 public interface LawPaymentRepository extends JpaRepository<LawPayment, Long> {
-    LawPayment findByPremiumUid(String premiumUid);
+    LawPayment findByImpUid(String impUid);
 
     @Query("SELECT p FROM law_payments p WHERE p.lawyerId = :lawyerId")
     List<LawPaymentDto> findByLawyerId(Long lawyerId);

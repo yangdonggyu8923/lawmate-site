@@ -13,7 +13,6 @@ import site.lawmate.user.component.Messenger;
 import site.lawmate.user.domain.dto.ProductDto;
 import site.lawmate.user.service.ProductService;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 

@@ -13,7 +13,4 @@ import org.springframework.stereotype.Component;
 @Builder
 public class Messenger {
     private String message;
-    private String accessToken;
-    private String refreshToken;
-    private Long id;
 }

@@ -1,16 +1,22 @@
 package site.lawmate.user.config;
 
 import com.siot.IamportRestClient.IamportClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AppConfig {
-    String apiKey = "Input REST API key.";
-    String secretKey = "Input REST API secret key.";
+public class TxConfig {
+    @Value("${iamport.key}")
+    private String apiKey;
+    @Value("${iamport.secret}")
+    private String apiSecret;
 
     @Bean
     public IamportClient iamportClient() {
-        return new IamportClient(apiKey, secretKey);
+        return new IamportClient(apiKey, apiSecret);
     }
+
 }
+
+

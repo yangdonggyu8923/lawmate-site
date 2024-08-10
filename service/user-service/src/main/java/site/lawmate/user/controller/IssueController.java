@@ -33,7 +33,7 @@ public class IssueController {
     @GetMapping(path = "/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(){
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        issueServiceImpl.addEmitter(emitter);
+        issueService.addEmitter(emitter);
         return emitter;
     }
 
@@ -42,6 +42,13 @@ public class IssueController {
     public ResponseEntity<Messenger> save(@RequestBody IssueDto dto) throws SQLException {
         log.info("issue save 파라미터: {} ", dto);
         return ResponseEntity.ok(issueService.save(dto));
+    }
+
+    @GetMapping("/notification/{lawyer}")
+    public ResponseEntity<List<IssueDto>> getAllLawyerNotifications(@PathVariable("lawyer") String lawyer) throws SQLException {
+        log.info("issue 변호사 알림 진입 id: {} ", lawyer);
+        List<IssueDto> issues = issueService.getAllNotifications(lawyer);
+        return ResponseEntity.ok(issues);
     }
 
     @GetMapping("/all")

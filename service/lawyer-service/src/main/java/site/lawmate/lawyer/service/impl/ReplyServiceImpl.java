@@ -16,6 +16,7 @@ public class ReplyServiceImpl implements ReplyService {
     private final ReplyRepository replyRepository;
     private final LawyerRepository lawyerRepository;
 
+    @Override
     public Mono<Lawyer> replyToLawyer(String id, String articleId, Reply reply) {
         return lawyerRepository.findById(id)
                 .flatMap(lawyer -> {
@@ -25,7 +26,7 @@ public class ReplyServiceImpl implements ReplyService {
                             .then(Mono.just(lawyer));
                 });
     }
-
+    @Override
     public Mono<Reply> updateReply(String id, Reply replyModel) {
         return replyRepository.findById(id)
                 .flatMap(reply->{
@@ -34,19 +35,25 @@ public class ReplyServiceImpl implements ReplyService {
                 });
     }
 
+    @Override
+    public Mono<Reply> getReplyByArticleId(String articleId) {
+        return replyRepository.findByArticleId(articleId);
+    }
+
+    @Override
     public Flux<Reply> getAllReplies() {
         return replyRepository.findAll();
     }
 
-
+    @Override
     public Mono<Void> deleteReply(String id) {
         return replyRepository.deleteById(id);
     }
-
+    @Override
     public Flux<Reply> getRepliesByLawyerId(String lawyerId) {
         return replyRepository.findAllByLawyerId(lawyerId);
     }
-
+    @Override
     public Mono<Void> deleteAllReplies() {
         return replyRepository.deleteAll();
     }

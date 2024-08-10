@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.lawmate.user.component.Messenger;
 import site.lawmate.user.domain.dto.QuestionDto;
-import site.lawmate.user.domain.dto.UserDto;
 import site.lawmate.user.service.QuestionService;
-import site.lawmate.user.service.impl.QuestionServiceImpl;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -38,7 +36,7 @@ public class QuestionController {
     @GetMapping("/all")
     public ResponseEntity<List<QuestionDto>> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "30") int size) {
         return ResponseEntity.ok(service.findAll(PageRequest.of(page, size)));
     }
 

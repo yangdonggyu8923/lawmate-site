@@ -20,21 +20,22 @@ public class Issue extends BaseEntity {
     private String law;
     private String title;
     private String content;
-    private String attachment;
-    private String lawyerId;
+    private String date;
+    private String time;
+    private String lawyer;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
 
 
-    public static Issue of(String law, String title, String content, String attachment, User client) {
+    public static Issue of(String law, String title, String content, User client, String lawyer) {
         Issue issue = new Issue();
         issue.law = law;
         issue.title = title;
         issue.content = content;
-        issue.attachment = attachment;
         issue.client = client;
+        issue.lawyer = lawyer;
         return issue;
     }
 }

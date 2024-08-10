@@ -16,8 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.lawmate.user.component.Messenger;
-import site.lawmate.user.domain.vo.PaymentStatus;
 import site.lawmate.user.domain.dto.UserPaymentDto;
+import site.lawmate.user.domain.vo.PaymentStatus;
+import site.lawmate.user.repository.UserPaymentRepository;
 import site.lawmate.user.service.UserPaymentService;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/user_payments")
+@RequestMapping(path = "/user/payments")
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -36,17 +37,18 @@ import java.util.Optional;
 })
 public class UserPaymentController {
     private final UserPaymentService userPaymentService;
+    private final UserPaymentRepository userPaymentRepository;
 
     @Value("${iamport.key}")
-    private String restApiKey;
+    private String apiKey;
     @Value("${iamport.secret}")
-    private String restApiSecret;
+    private String apiSecret;
 
     private IamportClient iamportClient;
 
     @PostConstruct
     public void init() {
-        this.iamportClient = new IamportClient(restApiKey, restApiSecret);
+        this.iamportClient = new IamportClient(apiKey, apiSecret);
     }
 
     @PostMapping("/save")
@@ -55,21 +57,41 @@ public class UserPaymentController {
         return ResponseEntity.ok(userPaymentService.save(dto));
     }
 
+    @PostMapping("/usePoint")
+    public ResponseEntity<Messenger> usePoint(@RequestBody UserPaymentDto dto) {
+        log.info("payment usePoint id: {} ", dto);
+        return ResponseEntity.ok(userPaymentService.subtractUserPoints(dto));
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<Messenger> cancelPayment(@RequestBody UserPaymentDto dto) throws IamportResponseException, IOException {
+        log.info("결제 취소 진입 성공: {}", dto);
+        IamportResponse<Payment> response = iamportClient.paymentByImpUid(dto.getImpUid());
+        log.info("결제 취소 imp_uid {}", response.getResponse().getImpUid());
+        return ResponseEntity.ok(userPaymentService.cancelPayment(dto));
+    }
+
     @PostMapping("/status")
     public ResponseEntity<String> paymentStatus(@RequestBody PaymentStatus status) {
         log.info("payment status: {}", status);
-        if (status == PaymentStatus.OK) {
-            // 결제 성공 시 처리할 로직 작성
+        if (status == PaymentStatus.PENDING) {
             return new ResponseEntity<>("Payment SUCCESS", HttpStatus.OK);
         } else {
-            // 결제 실패 시 처리할 로직 작성
             return new ResponseEntity<>("Payment FAILURE", HttpStatus.BAD_REQUEST);
         }
     }
 
+    //결제 조회
     @PostMapping("/verifyIamport/{imp_uid}")
     public ResponseEntity<?> paymentByImpUid(@PathVariable("imp_uid") String imp_uid) throws IamportResponseException, IOException {
         log.info("imp_uid={}", imp_uid);
+        IamportResponse<Payment> response = iamportClient.paymentByImpUid(imp_uid);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/{imp_uid}/balance")
+    public ResponseEntity<?> getBalance(@PathVariable String imp_uid) throws IamportResponseException, IOException {
         IamportResponse<Payment> response = iamportClient.paymentByImpUid(imp_uid);
         return ResponseEntity.ok(response);
     }
@@ -100,10 +122,16 @@ public class UserPaymentController {
         return ResponseEntity.ok(userPaymentService.findAll(PageRequest.of(page, size)));
     }
 
-    @GetMapping(path = "/buyer/{buyerId}")
+    @GetMapping("/buyer/{buyerId}")
     public ResponseEntity<List<UserPaymentDto>> findByBuyerId(@PathVariable("buyerId") Long buyerId) {
-        log.info("payment 정보 조회 진입 유저 id: {} ", buyerId);
-        return ResponseEntity.ok(userPaymentService.getPaymentsByBuyerId(buyerId));
+        return ResponseEntity.ok(userPaymentService.findByBuyerId(buyerId));
     }
+
+    @PutMapping("/confirm")
+    public ResponseEntity<Messenger> confirmPayment(@RequestBody UserPaymentDto dto) {
+        log.info("결제 수락 진입: {}", dto);
+        return ResponseEntity.ok(userPaymentService.confirmPayment(dto));
+    }
+
 
 }

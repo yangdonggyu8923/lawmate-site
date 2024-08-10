@@ -65,7 +65,7 @@ public class JwtTokenProvider{
         return extractClaim(jwt, i -> i.get("roles", List.class));
     }
 
-    public Mono<String> generateToken(UserDetails userDetails, boolean isRefreshToken){
+    public Mono<String> generateToken(PrincipalUserDetails userDetails, boolean isRefreshToken){
         return Mono.just(generateToken(Map.of(), userDetails, isRefreshToken))
                 .flatMap(token ->
                         isRefreshToken
@@ -74,11 +74,13 @@ public class JwtTokenProvider{
                 );
     }
 
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, boolean isRefreshToken){
+    private String generateToken(Map<String, Object> extraClaims, PrincipalUserDetails userDetails, boolean isRefreshToken){
+
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuer(issuer)
+                .claim("id", userDetails.getUser().getId())
                 .claim("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .claim("type", isRefreshToken ? "refresh" : "access")
                 .issuedAt(Date.from(Instant.now()))

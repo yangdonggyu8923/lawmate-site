@@ -3,7 +3,6 @@ package site.lawmate.user.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -41,6 +41,16 @@ public class IssueServiceImpl implements IssueService {
         emitter.onTimeout(() -> emitters.remove(emitter));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<IssueDto> getAllNotifications(String lawyer) {
+        log.info("issue 알림 service 진입 성공: {}", lawyer);
+        return issueRepository.findAllByLawyer(lawyer)
+                .stream()
+                .map(this::entityToDto) // Issue 엔티티를 IssueDto로 변환
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     @Override
     public Messenger save(IssueDto dto) {
@@ -51,8 +61,8 @@ public class IssueServiceImpl implements IssueService {
                 .law(dto.getLaw())
                 .title(dto.getTitle())
                 .content(dto.getContent())
-                .attachment(dto.getAttachment())
                 .client(dto.getClient())
+                .lawyer(dto.getLawyer())
                 .build();
         Issue savedIssue = issueRepository.save(issue);
         sendIssueUpdate(savedIssue);
@@ -97,7 +107,7 @@ public class IssueServiceImpl implements IssueService {
                     .law(dto.getLaw())
                     .title(dto.getTitle())
                     .content(dto.getContent())
-                    .attachment(dto.getAttachment())
+                    .lawyer(dto.getLawyer())
                     .client(dto.getClient())
                     .build();
             Long upatedIssueId = issueRepository.save(updatedIssue).getId();

@@ -15,10 +15,9 @@ import site.lawmate.user.domain.model.PaymentCallbackRequest;
 import site.lawmate.user.repository.LawPaymentRepository;
 import site.lawmate.user.service.LawPaymentService;
 
-import java.util.stream.Collectors;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -61,12 +60,10 @@ public class LawPaymentServiceImpl implements LawPaymentService {
         }
     }
 
-
     @Override
-    public UserPaymentDto findRequestDto(String orderUid) {
+    public UserPaymentDto findRequestDto(String impUid) {
         return null;
     }
-
 
     @Override
     public IamportResponse<Payment> paymentByCallback(PaymentCallbackRequest request) {

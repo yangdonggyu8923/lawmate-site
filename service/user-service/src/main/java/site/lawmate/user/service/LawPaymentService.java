@@ -6,10 +6,8 @@ import site.lawmate.user.domain.dto.LawPaymentDto;
 import site.lawmate.user.domain.dto.UserPaymentDto;
 import site.lawmate.user.domain.model.LawPayment;
 import site.lawmate.user.domain.model.PaymentCallbackRequest;
-import site.lawmate.user.domain.model.UserPayment;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface LawPaymentService extends CommandService<LawPaymentDto>, QueryService<LawPaymentDto> {
     // 결제 요청 데이터 조회
@@ -23,7 +21,7 @@ public interface LawPaymentService extends CommandService<LawPaymentDto>, QueryS
     default LawPayment dtoToEntity(LawPaymentDto dto) {
         return LawPayment.builder()
                 .lawyerId(dto.getLawyerId())
-                .premiumUid(UUID.randomUUID().toString())
+                .impUid(dto.getImpUid())
                 .build();
     }
 
@@ -31,7 +29,7 @@ public interface LawPaymentService extends CommandService<LawPaymentDto>, QueryS
         return LawPaymentDto.builder()
                 .id(pay.getId())
                 .lawyerId(pay.getLawyerId())
-                .premiumUid(UUID.randomUUID().toString())
+                .impUid(pay.getImpUid())
                 .build();
     }
 

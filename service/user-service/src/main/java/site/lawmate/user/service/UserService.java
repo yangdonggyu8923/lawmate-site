@@ -3,8 +3,10 @@ package site.lawmate.user.service;
 import site.lawmate.user.component.Messenger;
 import site.lawmate.user.domain.dto.LoginDTO;
 import site.lawmate.user.domain.dto.OAuth2UserDto;
-import site.lawmate.user.domain.model.User;
 import site.lawmate.user.domain.dto.UserDto;
+import site.lawmate.user.domain.model.User;
+
+import java.util.Optional;
 
 public interface UserService extends CommandService<UserDto>, QueryService<UserDto> {
 
@@ -12,7 +14,6 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
         return User.builder()
                 .email(dto.getEmail())
                 .name(dto.getName())
-                .password(dto.getPassword())
                 .phone(dto.getPhone())
                 .age(dto.getAge())
                 .gender(dto.getGender())
@@ -25,7 +26,6 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
-                .password(user.getPassword())
                 .phone(user.getPhone())
                 .age(user.getAge())
                 .gender(user.getGender())
@@ -36,8 +36,6 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
 
     LoginDTO oauthJoin(OAuth2UserDto dto);
 
-    Messenger login(UserDto dto);
-
     Boolean logout(String accessToken);
 
     Messenger update(UserDto dto);
@@ -46,6 +44,9 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
 
     Boolean existsByUsername(String email);
 
-    Messenger updateUserPoints(UserDto dto);
+    Messenger save(UserDto dto);
+
+    Optional<UserDto> findByEmail(String email);
+
 
 }

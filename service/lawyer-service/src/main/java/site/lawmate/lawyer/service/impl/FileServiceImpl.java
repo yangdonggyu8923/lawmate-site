@@ -1,6 +1,7 @@
 package site.lawmate.lawyer.service.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,33 +29,18 @@ public class FileServiceImpl implements FileService {
     private final FileRepository fileRepository;
     private final LawyerRepository lawyerRepository;
     private final AmazonS3 s3Client;
+    private final S3ServiceImpl s3ServiceImpl;
     private final String bucketName = "bucket-lawmate-lawyer";
 
-    
+    @Override
     public Flux<File> saveFiles(String lawyerId, Flux<FilePart> files) {
         return lawyerRepository.findById(lawyerId)
-                .flatMapMany(lawyer -> files.flatMap(filePart -> uploadToS3(filePart)
+                .flatMapMany(lawyer -> files.flatMap(filePart -> s3ServiceImpl.uploadFile(filePart)
                         .flatMap(url -> saveFileMetadata(lawyerId, filePart, url))));
     }
 
-    private Mono<String> uploadToS3(FilePart filePart) {
-        String key = UUID.randomUUID().toString() + "_" + filePart.filename();
-        return DataBufferUtils.join(filePart.content())
-                .flatMap(dataBuffer -> {
-                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(bytes);
-                    DataBufferUtils.release(dataBuffer);
-
-                    ObjectMetadata metadata = new ObjectMetadata();
-                    metadata.setContentLength(bytes.length);
-                    metadata.setContentType(filePart.headers().getContentType().toString());
-
-                    s3Client.putObject(new PutObjectRequest(bucketName, key, new ByteArrayInputStream(bytes), metadata));
-                    return Mono.just(s3Client.getUrl(bucketName, key).toString());
-                });
-    }
-
-    private Mono<File> saveFileMetadata(String lawyerId, FilePart filePart, String url) {
+    @Override
+    public Mono<File> saveFileMetadata(String lawyerId, FilePart filePart, String url) {
         File fileModel = new File();
         fileModel.setFilename(filePart.filename());
         fileModel.setContentType(filePart.headers().getContentType().toString());
@@ -63,22 +49,22 @@ public class FileServiceImpl implements FileService {
         return fileRepository.save(fileModel);
     }
 
-    
+    @Override
     public Mono<File> getFileById(String id) {
         return fileRepository.findById(id);
     }
 
-    
+    @Override
     public Mono<Void> deleteFileById(String id) {
         return fileRepository.deleteById(id);
     }
 
-    
+    @Override
     public Mono<Void> deleteAllFiles() {
         return fileRepository.deleteAll();
     }
 
-    
+    @Override
     public Mono<byte[]> downloadFile(String url) {
         return Mono.fromCallable(() -> {
             String key = getKeyFromUrl(url);
@@ -89,22 +75,22 @@ public class FileServiceImpl implements FileService {
         });
     }
 
-    
+    @Override
     public Mono<Void> deleteFileByUrl(String url) {
         return Mono.fromRunnable(() -> s3Client.deleteObject(bucketName, getKeyFromUrl(url)));
     }
 
-    
+    @Override
     public Flux<File> getAllFiles() {
         return fileRepository.findAll();
     }
 
-    
+    @Override
     public Flux<File> getFilesByLawyerId(String lawyerId) {
         return fileRepository.findAllByLawyerId(lawyerId);
     }
-
-    private String getKeyFromUrl(String url) {
+    @Override
+    public String getKeyFromUrl(String url) {
         return url.substring(url.lastIndexOf("/") + 1);
     }
 }
