@@ -1,6 +1,4 @@
-../docker-compose.yml
-../Dockerfile
-application.yml
+
 data/
 
 HELP.md
