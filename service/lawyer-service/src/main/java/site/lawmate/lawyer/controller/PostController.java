@@ -84,4 +84,9 @@ public class PostController {
                             .body(resource);
                 });
     }
+
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<Mono<Post>> getPostById(@PathVariable("postId") String postId) {
+        return ResponseEntity.ok(service.getPostById(postId));
+    }
 }

@@ -20,6 +20,7 @@ import site.lawmate.lawyer.service.FileService;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -92,5 +93,10 @@ public class FileServiceImpl implements FileService {
     @Override
     public String getKeyFromUrl(String url) {
         return url.substring(url.lastIndexOf("/") + 1);
+    }
+
+    @Override
+    public Flux<File> getFilesByIds(List<String> ids) {
+        return fileRepository.findAllById(ids);
     }
 }
